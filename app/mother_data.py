@@ -88,7 +88,7 @@ class GetBars:
                                                       request_timeout=30
                                                       )
                 except Exception:
-                    print(f'Загружены цены и уровни для монеты {self.coin} тайм-фрейм {self.time_frame}')
+                    #print(f'Загружены цены и уровни для монеты {self.coin} тайм-фрейм {self.time_frame}')
                     timer = 1800
                     old_time = asyncio.get_event_loop().time()
                     yield asyncio.sleep(0)
@@ -268,7 +268,7 @@ class CheckPrice:
         old_time = None
         timer = 1800
         while True:
-            print(f'приоритет {self.coin}, {self.time_frame}')
+            #print(f'приоритет {self.coin}, {self.time_frame}')
             now_time = asyncio.get_event_loop().time()
             if not old_time is None and now_time - old_time < timer:
                 yield asyncio.sleep(1)
@@ -356,7 +356,7 @@ class CheckPriceSpam:
         timer = 1800
         while True:
             now_time = asyncio.get_event_loop().time()
-            print(f'спам {self.coin}, {self.time_frame}')
+            #print(f'спам {self.coin}, {self.time_frame}')
             if not old_time is None and now_time - old_time < timer:
                 yield asyncio.sleep(1)
                 continue

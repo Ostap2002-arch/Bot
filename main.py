@@ -23,10 +23,12 @@ bot_utils = Bot(token=TELEGRAM_BOT_TOKEN_UTILS)
 bot_spam = Bot(token=TELEGRAM_BOT_TOKEN_SPAM)
 
 
-async def run():
+async def prepare_coins():
     await GetCoins(List_coins, bot_utils=bot_utils, chat_id=TELEGRAM_CHAT_ID).loading_coins()
+    return await GetCoins.get_coins()
 
-    Coins = await GetCoins.get_coins()
+
+async def run(Coins):
     List_time_frame = ['240'] * len(Coins) + ['720'] * len(Coins)
     Coins = Coins + Coins
 
@@ -56,14 +58,22 @@ async def run():
     await asyncio.gather(*[pool.run(), start_bot(bot)])
 
 
-def main():
+async def main_async():
+    Coins = await prepare_coins()
+
     while True:
         try:
-            asyncio.run(run())
+            await run(Coins)
         except Exception as e:
-            bot.send_message(TELEGRAM_CHAT_ID, f'Произошла ошибка. Бот перезугружается. Перерыв 15 минут. Ошибка {e}')
-            time.sleep(900)
+            await bot.send_message(TELEGRAM_CHAT_ID,
+                                   f'Произошла ошибка. Бот перезугружается. Перерыв 30 минут. Ошибка {e}')
+            await asyncio.sleep(1800)
             continue
 
 
-main()
+def main():
+    asyncio.run(main_async())
+
+
+if __name__ == "__main__":
+    main()
