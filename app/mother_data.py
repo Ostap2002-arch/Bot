@@ -166,9 +166,6 @@ class GetCoins:
         while True:
             await PricesTable.total_clear()
             await LevelsTable.total_clear()
-            await HideLevelsTable.total_clear()
-            await UserLevelsTable.total_clear()
-            await PriorityLevelsTable.total_clear()
             try:
                 await CoinsTable.total_clear()
                 List_coin = [CoinsTable(symbol=symbol) for symbol in self.coins]
@@ -269,12 +266,12 @@ class CheckPrice:
 
     async def check(self):
         old_time = None
-        timer = 120
+        timer = 1800
         while True:
             print(f'приоритет {self.coin}, {self.time_frame}')
             now_time = asyncio.get_event_loop().time()
             if not old_time is None and now_time - old_time < timer:
-                yield asyncio.sleep(0)
+                yield asyncio.sleep(1)
                 continue
             try:
                 session = HTTP()
@@ -293,7 +290,7 @@ class CheckPrice:
                     pass
                 timer = 1800
                 old_time = asyncio.get_event_loop().time()
-                yield asyncio.sleep(0)
+                yield asyncio.sleep(1)
                 continue
             if request['retMsg'] == 'OK':
                 price = float(request['result']['list'][0][4])
@@ -306,15 +303,15 @@ class CheckPrice:
                     pass
                 timer = 1800
                 old_time = asyncio.get_event_loop().time()
-                yield asyncio.sleep(0)
+                yield asyncio.sleep(1)
                 continue
             Levels = (await GetPriorityLevels(coin=self.coin, time_frame=self.time_frame).get_levels() +
                       await GetUserLevels(coin=self.coin, time_frame=self.time_frame).get_levels())
             Levels = list(map(lambda x: x.Level, Levels))
             if not bool(Levels):
-                timer = 120
+                timer = 900
                 old_time = asyncio.get_event_loop().time()
-                yield asyncio.sleep(0)
+                yield asyncio.sleep(1)
                 continue
             else:
                 level = list(sorted(Levels, key=lambda x: abs(x - price)))[0]
@@ -334,9 +331,9 @@ class CheckPrice:
                     old_time = asyncio.get_event_loop().time()
                     yield asyncio.sleep(0)
                     continue
-            timer = 120
+            timer = 1800
             old_time = asyncio.get_event_loop().time()
-            yield asyncio.sleep(0)
+            yield asyncio.sleep(1)
             continue
 
 
@@ -356,12 +353,12 @@ class CheckPriceSpam:
 
     async def check(self):
         old_time = None
-        timer = 120
+        timer = 1800
         while True:
             now_time = asyncio.get_event_loop().time()
             print(f'спам {self.coin}, {self.time_frame}')
             if not old_time is None and now_time - old_time < timer:
-                yield asyncio.sleep(0)
+                yield asyncio.sleep(1)
                 continue
             try:
                 session = HTTP()
@@ -380,7 +377,7 @@ class CheckPriceSpam:
                     pass
                 timer = 1800
                 old_time = asyncio.get_event_loop().time()
-                yield asyncio.sleep(0)
+                yield asyncio.sleep(1)
                 continue
             if request['retMsg'] == 'OK':
                 price = float(request['result']['list'][0][4])
@@ -392,14 +389,14 @@ class CheckPriceSpam:
                     pass
                 timer = 1800
                 old_time = asyncio.get_event_loop().time()
-                yield asyncio.sleep(0)
+                yield asyncio.sleep(1)
                 continue
             Levels = await GetLevels(coin=self.coin, time_frame=self.time_frame).get_levels()
             LevelsLevel = list(map(lambda x: x.Level, Levels))
             if not bool(LevelsLevel):
-                timer = 120
+                timer = 900
                 old_time = asyncio.get_event_loop().time()
-                yield asyncio.sleep(0)
+                yield asyncio.sleep(1)
                 continue
             else:
                 level = list(sorted(LevelsLevel, key=lambda x: abs(x - price)))[0]
@@ -446,9 +443,9 @@ class CheckPriceSpam:
                             pass
                         timer = 1800
                         old_time = asyncio.get_event_loop().time()
-                        yield asyncio.sleep(0)
+                        yield asyncio.sleep(1)
                         continue
-                timer = 120
+                timer = 1800
                 old_time = asyncio.get_event_loop().time()
-                yield asyncio.sleep(0)
+                yield asyncio.sleep(1)
                 continue
